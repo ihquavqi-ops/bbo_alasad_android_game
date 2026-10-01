@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ببو الأسد</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,Arial;background:linear-gradient(135deg,#dff7ff,#fff2b8);color:#17233b}
+.app{max-width:1100px;margin:auto;padding:12px}.top,.panel{background:#fff;border-radius:22px;padding:14px;box-shadow:0 7px 25px #0001;margin-bottom:12px}
+.top{display:flex;justify-content:space-between;align-items:center}.logo{font-size:27px;font-weight:900}.coins{background:#ffe16b;padding:9px 15px;border-radius:18px;font-weight:900}
+.scene{height:720px;border-radius:28px;background-image:url("assets/bbo_game_ui.png");background-size:cover;background-position:center;position:relative;overflow:hidden}.floor{display:none}
+.window{display:none}
+.char{position:absolute;width:275px;animation:breathe 2.5s infinite ease-in-out;height:275px;object-fit:contain;left:50%;bottom:8%;transform:translateX(-50%);transition:.25s;filter:drop-shadow(0 12px 8px #0003)}
+@keyframes breathe{0%,100%{margin-bottom:0}50%{margin-bottom:10px}}
+.bubble{display:none;position:absolute;right:5%;top:7%;background:#fff;border-radius:20px;padding:14px 20px;font-size:20px;font-weight:900;max-width:48%;box-shadow:0 5px 16px #0002}
+.food{display:none;position:absolute;right:16%;bottom:13%;font-size:62px;cursor:pointer;transition:.55s;z-index:2}
+
+.lobby-ui{position:absolute;inset:0;pointer-events:none}
+.side-menu{position:absolute;left:18px;top:90px;display:flex;flex-direction:column;gap:10px;z-index:3}
+.side-menu button{pointer-events:auto;background:#1877e8;color:#fff;border:3px solid #8bd1ff;border-radius:18px;width:150px;font-size:18px}
+.lobby-shop{position:absolute;right:18px;top:20px;background:#1268d9cc;color:white;border-radius:22px;padding:15px;z-index:3;width:270px}
+.lobby-games{position:absolute;right:18px;bottom:18px;background:#1268d9cc;color:white;border-radius:22px;padding:15px;z-index:3;width:430px}
+.tabs{display:flex;gap:8px;flex-wrap:wrap}button{border:0;border-radius:14px;padding:11px 15px;font-weight:900;cursor:pointer;background:#e8f2ff}button.active{background:#4d9fff;color:white}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:12px}.card{background:#f4f8fc;border-radius:17px;padding:12px;text-align:center}.emoji{font-size:43px}.card button{margin-top:8px;background:#ffd45a}
+.chat{display:flex;gap:8px;margin-top:12px}.chat input{flex:1;padding:12px;border:2px solid #dce6ef;border-radius:14px;font-size:16px}
+.note{margin-top:10px;background:#eef7ff;border-radius:13px;padding:10px;font-size:13px;color:#52647a}
+.code{direction:ltr;text-align:left;background:#101722;color:#d8f5ff;border-radius:14px;padding:12px;overflow:auto;font-size:12px}
+</style></head>
+<body><div id="loading" style="position:fixed;inset:0;background:#fff8d6;display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:900;z-index:9">🦁 جاري تحميل ببو الأسد...</div><div class="app">
+<div class="top"><div class="logo">🦁 ببو الأسد</div><div class="coins">🪙 <span id="coins">250</span> كوينز | 🏆 <span id="score">0</span> نقاط</div><select id="lang" onchange="changeLang()"><option>العربية</option><option>English</option><option>Deutsch</option></select></div>
+
+<div class="panel" id="lobbyPanel"><h2>🏠 لوبي ببو الأسد</h2><p>اختر ماذا تريد أن تفعل مع ببو الأسد:</p><div class="tabs"><button onclick="tab('home',this)">🏠 البيت</button><button onclick="tab('shop',this)">🛒 المتجر</button><button onclick="tab('games',this)">🎮 الألعاب</button><button onclick="tab('settings',this)">⚙️ الإعدادات</button><button onclick="document.getElementById('lang').focus()">🌍 اللغة</button></div></div>
+
+<div class="scene"><div class="window"></div><div class="floor"></div>
+<div class="lobby-ui">
+<div class="side-menu">
+<button onclick="tab('home',this)">🏠 المنزل</button>
+<button onclick="tab('games',this)">🎮 اللعب</button>
+<button onclick="tab('shop',this)">🛒 المتجر</button>
+<button onclick="tab('settings',this)">⭐ المهام</button>
+<button onclick="tab('more',this)">🐾 المزيد</button>
+</div>
+<div class="lobby-shop">🛒 المتجر<br>🍖 لحم 50 🐟 سمك 70 🦴 عظمة 90</div>
+<div class="lobby-games">🎮 الألعاب<br>🧩 ألغاز ببو | 🦁 قفز الأسد | 🐾 ذاكرة ببو</div>
+</div>
+<div id="bubble" class="bubble"></div>
+<img id="char" onclick="petBbo()" class="char" src="assets/bbo_alasad_original.jpg" alt="ببو الأسد"><div id="food" class="food"></div></div>
+<div class="panel"><div class="tabs">
+<button class="active" onclick="tab('home',this)">🏠 الرئيسية</button>
+<button onclick="tab('shop',this)">🛒 المتجر</button><button onclick="tab('games',this)">🎮 الألعاب</button>
+<button onclick="tab('chat',this)">💬 ببو الأسد</button><button onclick="tab('settings',this)">⚙️ الإعدادات</button><button onclick="tab('code',this)">🛠️ CodeAssist</button>
+</div><div id="content"></div></div></div>
+<script>
+let coins=Number(localStorage.getItem("bboCoins")||250), score=Number(localStorage.getItem("bboScore")||0), food=null, inventory=JSON.parse(localStorage.getItem("bboInventory")||"[]");
+const foods=[["🍎","تفاحة",20],["🍗","دجاج",35],["🐟","سمكة",30],["🍪","بسكويت",15],["🥩","لحم",45]];
+document.getElementById("coins").textContent=coins; document.getElementById("score").textContent=score; setTimeout(()=>document.getElementById("loading").style.display="none",1200);
+
+/* أصوات أزرار بدون ملفات إضافية: WebAudio */
+let audioCtx;
+function clickSound(freq=520){
+ try{audioCtx=audioCtx||new (window.AudioContext||window.webkitAudioContext)();
+ const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.frequency.value=freq;o.type="sine";
+ g.gain.setValueAtTime(.0001,audioCtx.currentTime);g.gain.exponentialRampToValueAtTime(.055,audioCtx.currentTime+.01);
+ g.gain.exponentialRampToValueAtTime(.0001,audioCtx.currentTime+.09);o.connect(g);g.connect(audioCtx.destination);o.start();o.stop(audioCtx.currentTime+.1)}catch(e){}
+}
+document.addEventListener("click",e=>{if(e.target.closest("button"))clickSound()});
+
+function show(text){
+ const b=document.getElementById("bubble");b.textContent=text;b.style.display="block";
+ // صوت المستخدم المرفوع كصوت مرجعي/تجريبي.
+ const a=new Audio("assets/bbo_voice.m4a");a.play().catch(()=>{});
+}
+function buy(i){let f=foods[i];if(coins<f[2])return show("ما معي كوينز كفاية!");coins-=f[2];inventory.push({name:f[1],icon:f[0]});save();
+ food=f;let x=document.getElementById("food");x.textContent=f[0];x.style.display="block";show("اشتريتيلي أكلة! 🦁");}
+document.getElementById("food").onclick=()=>{
+ if(!food)return;clickSound(650);let x=document.getElementById("food");
+ x.style.transform="translate(-42px,-15px) scale(.78)";
+ setTimeout(()=>{x.style.display="none";x.style.transform="";food=null;show("مممم! أكلتها وصارت ببطني! 🦁");},650)
+};
+function save(){localStorage.setItem("bboCoins",coins);localStorage.setItem("bboScore",score);localStorage.setItem("bboInventory",JSON.stringify(inventory));document.getElementById("coins").textContent=coins;document.getElementById("score").textContent=score}
+function addScore(n){score+=n; if(n>=1000) coins+=400; else if(n>=500) coins+=250; else coins+=25; save(); show("ربحت نقاط وكوينز! 🦁")}
+function petBbo(){show("أحب اللعب معك! 🦁"); document.getElementById("char").style.transform="translateX(-50%) scale(1.05)"; setTimeout(()=>document.getElementById("char").style.transform="translateX(-50%)",250)}
+function win(){coins+=25;save();show("برافو! ربحت كوينز داخل اللعبة!");}
+function tab(t,btn){
+ document.querySelectorAll(".tabs button").forEach(x=>x.classList.remove("active"));btn.classList.add("active");
+ let c=document.getElementById("content");
+ if(t==="home")c.innerHTML='<h2>🏠 ببو الأسد</h2><p>أهلاً في عالم ببو الأسد! 🦁</p><div class="note">ببو الأسد لا يسمن من الأكل. الكوينز والأطعمة افتراضية داخل اللعبة فقط.</div>';
+ if(t==="shop")c.innerHTML='<h2>🛒 متجر ببو الأسد</h2><p>مشترياتي: '+(inventory.map(x=>x.icon).join(" ")||"لا يوجد")+'</p><div class="grid">'+foods.map((f,i)=>`<div class="card"><div class="emoji">${f[0]}</div><b>${f[1]}</b><div>${f[2]} 🪙</div><button onclick="buy(${i})">شراء وإطعام ببو</button></div>`).join("")+'</div>';
+ if(t==="games")c.innerHTML='<h2>🎮 ألعاب</h2><div class="grid"><div class="card"><div class="emoji">🎯</div><b>تحدي الهدف</b><button onclick="addScore(1000)">العب واربح 🪙</button></div><div class="card"><div class="emoji">🧩</div><b>لغز</b><button onclick="addScore(1000)">العب واربح 🪙</button></div><div class="card"><div class="emoji">⚽</div><b>تحدي الكرة</b><button onclick="addScore(1000)">العب واربح 🪙</button></div></div><div class="note">الكوينز داخل اللعبة فقط وليست أموالاً حقيقية.</div>';
+ if(t==="chat")c.innerHTML='<h2>💬 تحدث مع ببو الأسد</h2><div class="chat"><input id="msg" placeholder="اكتب لببو الأسد..."><button onclick="send()">إرسال</button><button onclick="listen()">🎙️ صوت</button></div><div class="note">مكان الربط بمحرك الذكاء الاصطناعي: اللاعب يكتب أو يتكلم، الخادم يولّد رد ببو، ثم محرك TTS يحوله لصوت الشخصية.</div>';
+ if(t==="more")c.innerHTML='<h2>🐾 المزيد</h2><p>قائمة المزيد تعمل الآن.</p>';
+ if(t==="settings")c.innerHTML='<h2>⚙️ الإعدادات</h2><p>تم تجهيز الإعدادات الأساسية للعبة: اللغة، الصوت، وحفظ التقدم.</p><button onclick="localStorage.clear();location.reload()">إعادة ضبط التقدم</button>';
+ if(t==="code")c.innerHTML='<h2>⚙️ دعم CodeAssist</h2><p>المشروع مبني كـ HTML/CSS/JavaScript، لذلك يمكن فتحه أو نسخه داخل بيئة CodeAssist التي تدعم مشاريع الويب.</p><div class="code">index.html<br>assets/bbo_alasad_original.jpg<br>assets/bbo_voice.m4a<br>assets/bbo_game_ui.png</div><div class="note">مهم: مفتاح API للذكاء الاصطناعي أو محرك الصوت لا يوضع داخل التطبيق؛ يوضع في خادم آمن.</div>';
+}
+function localReply(t){
+ if(/اكل|أكل|طعام|جوع/.test(t))return"أنا جوعان شوي! 🦁";
+ if(/لعب|نلعب/.test(t))return"يلا نلعب! 🎮";
+ if(/مرحبا|هلا|أهلا|اهلا/.test(t))return"أهلاً! أنا ببو الأسد! 🦁";
+ if(/شكرا|شكراً/.test(t))return"العفو يا صديقي! 😊";
+ return"ايااااا! سمعتك! 🦁";
+}
+function send(){let x=document.getElementById("msg"),t=x.value.trim();if(!t)return;x.value="";show(localReply(t))}
+function listen(){let R=window.SpeechRecognition||window.webkitSpeechRecognition;if(!R)return show("التحدث الصوتي غير مدعوم بهذا المتصفح.");let r=new R();r.lang="ar-SA";r.onresult=e=>show(localReply(e.results[0][0].transcript));r.start()}
+tab("home",document.querySelector(".tabs button"));
+</script></body></html>
