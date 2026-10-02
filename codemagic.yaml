@@ -1,0 +1,11 @@
+workflows:
+  android-debug:
+    name: Bbo Alasad APK
+    environment:
+      groups:
+        - google_play
+    scripts:
+      - name: Build APK
+        script: gradle assembleDebug
+    artifacts:
+      - app/build/outputs/apk/debug/app-debug.apk
